@@ -1,5 +1,5 @@
 {
-    "name": "SDeb/slim-security",
+    "name": "s-deb/slim-security",
     "description": "A PSR-7 compliant security middle",
     "type": "php-middleware",
     "keywords": ["middleware","input validation", "authentication","waf","authorisation"],
