@@ -8,16 +8,14 @@
 namespace SDeb;
 
 
+use SDeb\utils\Utils;
+
 class SecurityConfigutations
 {
 
     public static function getConfig()
     {
-        return self::loadFromFile();
+        return Utils::loadFromFile('security.json');
     }
 
-    private static function loadFromFile()
-    {
-        return array();
-    }
 }

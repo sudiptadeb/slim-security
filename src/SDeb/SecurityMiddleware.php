@@ -11,6 +11,10 @@ namespace SDeb;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Class SecurityMiddleware
+ * @package SDeb
+ */
 class SecurityMiddleware
 {
     private $globalSecurityConfigurations ;
@@ -30,11 +34,21 @@ class SecurityMiddleware
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null) {
 
-        //TODO Validate the request according to the mode and the config
-        $errors = $this->validate($request,$response);
+        // Passing the error variable to all validators
+        $errors = new SecurityError();
 
+        if(mode=='global' && !($this->isValidGlobalConfig())){
+            $errors->add('global configuration not valid !');
+        }
+
+        //calling each validator manually,
+        //TODO make this sequence configurable
+        $this->throttling($request,$response,$errors);
+        $this->authValidation($request,$response,$errors);
+        $this->inputValidation($request,$response,$errors);
+
+        //check if the request has errors
         if(!empty($errors)){
-            // Request is invalid. Log and drop the request with corresponding error code (400 mostly)
             return $response->withStatus(400,$errors->getReason());
         }
 
@@ -47,21 +61,62 @@ class SecurityMiddleware
         }
     }
 
-    private function isValidConfig($pathConfig)
+    /**
+     * @param $pathConfig
+     * @return bool
+     */
+    private function isValidConfig()
     {
-        //TODO Validate the config array. If minimum requirements donot meet then fallback to global mode. #securebydefault
+        //For now no required configs. In future we may have some
         return true;
+    }
+
+    private function isValidGlobalConfig()
+    {
+        if(!($this->globalSecurityConfigurations.key_exists('properties'))){
+            return false;
+        }
+
+        if(!($this->globalSecurityConfigurations.key_exists('paths'))){
+            return false;
+        }
+
     }
 
     /**
      * @param $request
      * @param $response
-     * @return SecurityError
+     * @param $errors
+     * @return mixed
      */
-    private function validate($request, $response)
+    private function throttling($request, $response, $errors)
     {
-        $errors = new SecurityError();
+        //TODO Actual validations happen here
 
+        return $errors;
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     * @param $errors
+     * @return mixed
+     */
+    private function authValidation($request, $response, $errors)
+    {
+        //TODO Actual validations happen here
+
+        return $errors;
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     * @param $errors
+     * @return mixed
+     */
+    private function inputValidation($request, $response, $errors)
+    {
         //TODO Actual validations happen here
 
         return $errors;
